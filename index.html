@@ -451,49 +451,60 @@ footer a:focus {
 
   <script>
     
-    function armarMensaje() {
-      const checks = document.querySelectorAll('input[type="checkbox"]:checked');
-      if (!checks.length) {
-        return "Hola! Quiero info sobre tus servicios.";
-      }
-      const items = [];
-      checks.forEach(ch => {
-        const nombre = ch.getAttribute('data-name') || 'Servicio';
-        const price = ch.getAttribute('data-price');
-        if(price && price !== 'CONSULTAR'){
-          items.push(${nombre} - $${price});
-        } else {
-          items.push(${nombre} - Consultar);
-        }
-      });
-      const cuerpo = items.join('\n');
-      return Hola! Quiero pedir/consultar:\n${cuerpo}\n---\nEnviado desde el catálogo de revendedores.;
+   // Función para armar el mensaje de WhatsApp
+function armarMensaje() {
+  const checks = document.querySelectorAll('input[type="checkbox"]:checked');
+
+  // Si no hay ningún servicio seleccionado
+  if (checks.length === 0) {
+    return "Hola! Quiero info sobre tus servicios.";
+  }
+
+  const items = [];
+  checks.forEach(ch => {
+    const nombre = ch.getAttribute('data-name') || 'Servicio';
+    const price = ch.getAttribute('data-price');
+    if(price && price.toUpperCase() !== 'CONSULTAR'){
+      items.push(`${nombre} - $${price}`);
+    } else {
+      items.push(`${nombre} - Consultar`);
     }
+  });
 
-    function enviarWhatsApp() {
-      const msg = encodeURIComponent(armarMensaje());
-      const url = https://wa.me/${5492657219227}?text=${msg};
-      window.open(url, '_blank');
-    }
+  const cuerpo = items.join('\n');
+  return `Hola! Quiero pedir/consultar:\n${cuerpo}\n---\nEnviado desde el catálogo de revendedores.`;
+}
 
-    document.getElementById('btnEnviar').addEventListener('click', enviarWhatsApp);
-    document.getElementById('linkWsFooter').addEventListener('click', function(e){
-      e.preventDefault();
-      enviarWhatsApp();
-    });
+// Función para enviar WhatsApp
+function enviarWhatsApp() {
+  const msg = encodeURIComponent(armarMensaje());
+  const numero = '5492657219227'; // Reemplaza por tu número correcto en formato internacional
+  const url = `https://wa.me/${numero}?text=${msg}`;
+  window.open(url, '_blank');
+}
 
-    // ----- UX: marcar parent marca todas sus opciones? (opcional) -----
-    document.querySelectorAll('.parent-option').forEach(parentChk => {
-      parentChk.addEventListener('change', e => {
-        const parentName = parentChk.getAttribute('data-name');
-        const group = document.querySelector(.grouped-options[data-parent="${parentName}"]);
-        if(group){
-          group.querySelectorAll('input[type="checkbox"]').forEach(ch => {
-            ch.checked = parentChk.checked;
-          });
-        }
+// Evento click del botón principal
+document.getElementById('btnEnviar').addEventListener('click', enviarWhatsApp);
+
+// Evento click del link en el footer
+document.getElementById('linkWsFooter').addEventListener('click', function(e){
+  e.preventDefault();
+  enviarWhatsApp();
+});
+
+// ----- UX: marcar parent marca todas sus opciones -----
+document.querySelectorAll('.parent-option').forEach(parentChk => {
+  parentChk.addEventListener('change', e => {
+    const parentName = parentChk.getAttribute('data-name');
+    const group = document.querySelector(`.grouped-options[data-parent="${parentName}"]`);
+    if(group){
+      group.querySelectorAll('input[type="checkbox"]').forEach(ch => {
+        ch.checked = parentChk.checked;
       });
-    });
+    }
+  });
+});
+
   </script>
 </body>
 </html>
