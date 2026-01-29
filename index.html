@@ -233,6 +233,10 @@ section h2 {
   transform: translateY(-1px);
   box-shadow: 0 18px 44px rgba(224,82,82,.45);
 }
+header, main, footer, .cta-wrapper {
+  position: relative;
+  z-index: 1;
+}
 
 /* MARCA DE FONDO */
 body::before {
@@ -244,7 +248,7 @@ body::before {
   opacity:var(--marca-opacity);
   filter: blur(var(--marca-blur));
   pointer-events:none;
-  z-index:0;
+  z-index:-1;
 }
 
 /* MOBILE */
